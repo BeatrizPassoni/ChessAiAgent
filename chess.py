@@ -1,12 +1,10 @@
 import pygame
 import sys
-import time
 
 from setting import Config
 from tools import OnBoard, Position
 from board import Board
 from Minimax.chessAI import Minimax
-import ui
 
 class Chess:
     def __init__(self, screen):
