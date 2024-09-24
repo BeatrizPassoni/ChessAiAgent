@@ -25,13 +25,13 @@ Este projeto implementa um jogo de xadrez utilizando Python e a biblioteca Pygam
    git clone https://github.com/seu_usuario/projeto_xadrez.git
 
 2. Navegue até o diretório do projeto:
-```bash
-cd projeto_xadrez
+   ```bash
+   cd projeto_xadrez
 
 3. Instale a biblioteca pygame
-```bash
-pip install pygame
+   ```bash
+   pip install pygame
 
 ## Execução 
-```bash
-python main.py
+   ```bash
+   python main.py
