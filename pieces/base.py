@@ -35,6 +35,4 @@ class Piece:
         if OnBoard(pos) and board.grid[pos.x][pos.y] != None and board.grid[pos.x][pos.y].color != self.color:
             captures.append(pos.GetCopy())
 
-        # print(moves)
-
         return moves, captures

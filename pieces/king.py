@@ -7,7 +7,6 @@ class King(Piece):
     def __init__(self, position, color):
         super().__init__(position, color)
         self.code = "k"
-        # self.value = 100 if color == 0 else -100
         self.sprite = GetSprite(self)
         self.previousMove = None
         self.pieceMap = []
@@ -21,15 +20,10 @@ class King(Piece):
         rightRook = board.grid[7][self.position.y]
         leftRook = board.grid[0][self.position.y]
 
-        # check if the king hasn't moved
-        # check if there is no piece between the rooks
-        # and the king
         if self.previousMove == None:
-            # CASTLE LEFT
             if (board.grid[1][self.position.y] == None and board.grid[2][self.position.y] == None \
                 and board.grid[3][self.position.y] == None) and King.CanCastle(leftRook):
                 castles.append(Position(2, self.position.y))
-            # CASTLE RIGHT
             if (board.grid[5][self.position.y] == None and board.grid[6][self.position.y] == None) \
                 and King.CanCastle(rightRook):
                 castles.append(Position(6, self.position.y))

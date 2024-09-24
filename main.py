@@ -1,26 +1,21 @@
-import pygame
-import sys
-from setting import Config
-from chess import Chess
+import pygame  # Importa a biblioteca Pygame para desenvolvimento de jogos
+import sys  # Importa o módulo sys para manipulação do sistema
+from setting import Config  # Importa configurações do jogo
+from chess import Chess  # Importa a classe Chess, que gerencia a lógica do jogo
 
+# Função principal que inicializa o jogo
 def main():
-    # initialize pygame
-    pygame.init()
-    pygame.font.init()
-    screen = pygame.display.set_mode(Config.resolution)
+    pygame.init()  # Inicializa todos os módulos do Pygame
+    pygame.font.init()  # Inicializa o módulo de fontes do Pygame
+    screen = pygame.display.set_mode(Config.resolution)  # Cria a janela do jogo com a resolução especificada
 
-    # load and set icon of the main window
-    loaded_icon = pygame.image.load("./assets/images/white_knight.png")
-    main_icon = pygame.transform.smoothscale(loaded_icon, (Config.windowIconSize, Config.windowIconSize))
-    pygame.display.set_icon(main_icon)
+    # Cria uma instância da classe Chess e inicia o jogo contra o computador
+    chess_game = Chess(screen)  # Instancia o jogo de xadrez com a tela definida
+    chess_game.vsComputer()  # Chama a função para jogar contra a IA
 
-    # Initialize Chess game directly
-    chess_game = Chess(screen)
-    chess_game.vsComputer()  # Start the game against the computer
+    pygame.quit()  # Encerra o Pygame
+    sys.exit()  # Sai do programa
 
-    # quit pygame
-    pygame.quit()
-    sys.exit()
-
+# Verifica se o script está sendo executado diretamente
 if __name__ == "__main__":
-    main()
+    main()  # Chama a função principal
