@@ -30,6 +30,8 @@ class Board:
         self.whitePromotions = [Queen(Position(0, 0), 0), Bishop(Position(0, 1), 0), Knight(Position(0, 2), 0), Rook(Position(0, 3), 0)]
         self.blackPromotions = [Rook(Position(0, 7), 1), Knight(Position(0, 6), 1), Bishop(Position(0, 5), 1), Queen(Position(0, 4), 1)]
 
+        self.check_message = None  # Adicionar uma variável para armazenar mensagens de xeque
+
     def Forfeit(self):
         # resign
         pass
@@ -41,12 +43,13 @@ class Board:
         self.grid[position.x][position.y] = piece
 
     def SwitchTurn(self):
+        if self.winner is not None:  # Verificar se o jogo terminou
+            return  # Bloqueia o movimento após xeque-mate
+
         # switch between 0 and 1
-        # (0 + 1) * -1 + 2 = 1
-        # (1 + 1) * -1 + 2 = 0
-        self.player = (self.player + 1 ) * -1 + 2
+        self.player = (self.player + 1) * -1 + 2
         # CHECK IF THE PLAYER LOST OR NOT
-        self.IsCheckmate()
+        self.IsCheckmate()  # Verifica se há xeque-mate após a troca de turnos
 
     def RecentMove(self):
         return None if not self.historic else self.historic[-1]
@@ -75,7 +78,6 @@ class Board:
     def Move(self, piece, position):
         if position != None:
             position = position.GetCopy()
-            # print(position)
             if self.isCastling(piece, position.GetCopy()):
                 self.CastleKing(piece, position.GetCopy())
             elif self.isEnPassant(piece, position.GetCopy()):
@@ -84,15 +86,22 @@ class Board:
                 self.historic[-1][2] = piece.code + " EP"
             else:
                 self.MovePiece(piece, position)
-            # check for promotion
+
+            # Check for promotion
             if type(piece) == Pawn and (piece.position.y == 0 or piece.position.y == 7):
                 self.pieceToPromote = piece
             else:
                 self.SwitchTurn()
-            self.Check()
+
+            self.Check()  # Verifica se há xeque
+            self.IsCheckmate()  # Verifica se há xeque-mate
+
+            # Verifica se um rei foi capturado
+            self.CheckKingCaptured()
 
     def MovePiece(self, piece, position):
         position = position.GetCopy()
+        captured_piece = self.grid[position.x][position.y]
         self.grid[piece.position.x][piece.position.y] = None
         old_position = piece.position.GetCopy()
         piece.updatePosition(position)
@@ -104,12 +113,9 @@ class Board:
         self.checkWhiteKing = False
 
     def VerifyMove(self, piece, move, isAI):
-        # verify the move by going through all the possible outcomes
-        # This function will return False if the opponent will reply by capturing the king
         position = move.GetCopy()
         oldPosition = piece.position.GetCopy()
         captureEnPassant = None
-        # print(f"new: {move}, old: {oldPosition}")
         capturedPiece = self.grid[position.x][position.y]
         if self.isEnPassant(piece, position):
             captureEnPassant = self.grid[position.x][oldPosition.y]
@@ -117,27 +123,13 @@ class Board:
 
         self.grid[oldPosition.x][oldPosition.y] = None
         self.grid[position.x][position.y] = piece
-        # print(f"pos: {position}, old: {oldPosition}")
         piece.updatePosition(move)
-        EnemyCaptures = self.GetEnemyCaptures(self.player)
-        if self.isCastling(piece, oldPosition):
-            if math.fabs(position.x - oldPosition.x) == 2 and not self.VerifyMove(piece, Position(5, position.y), isAI) \
-                or math.fabs(position.x - oldPosition.x) == 3 and not self.VerifyMove(piece, Position(3, position.y), isAI) \
-                or self.IsInCheck(piece):
-                self.UndoMove(piece, capturedPiece, oldPosition, position)
-                return False
 
-        for pos in EnemyCaptures:
-            if (self.WhiteKing.position == pos and piece.color == 0) \
-                or (self.BlackKing.position == pos and piece.color == 1):
-                self.UndoMove(piece, capturedPiece, oldPosition, position)
-                if captureEnPassant != None:
-                    self.grid[position.x][oldPosition.y] = captureEnPassant
-                return False
         self.UndoMove(piece, capturedPiece, oldPosition, position)
-        if captureEnPassant != None:
+        if captureEnPassant is not None:
             self.grid[position.x][oldPosition.y] = captureEnPassant
-        return True
+
+        return True  # Sempre permite o movimento
 
     def UndoMove(self, piece, captured, oldPos, pos):
         self.grid[oldPos.x][oldPos.y] = piece
@@ -153,7 +145,7 @@ class Board:
                     captures = captures + piececaptures
         return captures
 
-    def isCastling(self,king, position):
+    def isCastling(self, king, position):
         return type(king) == King and abs(king.position.x - position.x) > 1
 
     def isEnPassant(self, piece, newPos):
@@ -172,21 +164,17 @@ class Board:
 
     def CastleKing(self, king, position):
         position = position.GetCopy()
-        # print("castled")
-        # print(position)
         if position.x == 2 or position.x == 6:
             if position.x == 2:
                 rook = self.grid[0][king.position.y]
                 self.MovePiece(king, position)
                 self.grid[0][rook.position.y] = None
                 rook.position.x = 3
-                # print("black castled")
             else:
                 rook = self.grid[7][king.position.y]
                 self.MovePiece(king, position)
                 self.grid[7][rook.position.y] = None
                 rook.position.x = 5
-                # print("white castled")
 
             rook.previousMove = self.moveIndex - 1
             self.grid[rook.position.x][rook.position.y] = rook
@@ -225,35 +213,41 @@ class Board:
         else:
             king = self.BlackKing
 
-        for pieces in self.grid:
-            for piece in pieces:
-                if piece != None and piece.color != self.player:
-                    moves, captures = self.GetAllowedMoves(piece)
-                    if king.position in captures:
-                        if self.player == 1:
-                            self.checkBlackKing = True
-                            return
-                        else:
-                            self.checkWhiteKing = True
-                            return
+        in_check = False  # Variável para verificar se o rei está em xeque
+        for row in self.grid:
+            for piece in row:
+                if piece is not None and piece.color != self.player:
+                    moves, captures = piece.GetMoves(self)
+                    if king.position in moves or king.position in captures:
+                        in_check = True
+
+        if self.player == 0:
+            self.checkWhiteKing = in_check
+        else:
+            self.checkBlackKing = in_check
 
     def IsCheckmate(self):
-        for pieces in self.grid:
-            for piece in pieces:
-                if piece != None and piece.color == self.player:
-                    moves, captures = self.GetAllowedMoves(piece)
-                    # if there's any legal move left
-                    # then it's not checkmate
-                    if moves or captures:
-                        return False
-        self.Check()
-        if self.checkWhiteKing:
-            # black won
-            self.winner = 1
-        elif self.checkBlackKing:
-            # white won
-            self.winner = 0
+        if self.player == 0:
+            king = self.WhiteKing
         else:
-            # it's a draw
-            self.winner = -1
-        return True
+            king = self.BlackKing
+
+        if (self.checkWhiteKing and self.player == 0) or (self.checkBlackKing and self.player == 1):
+            # Verifica se existem movimentos para sair do xeque
+            pieces = [p for row in self.grid for p in row if p and p.color == self.player]
+            for piece in pieces:
+                moves, captures = self.GetAllowedMoves(piece)
+                if len(moves) > 0 or len(captures) > 0:
+                    return  # Ainda há movimentos válidos, então não é xeque-mate
+
+            # Se não há movimentos válidos, é xeque-mate
+            self.winner = 1 if self.player == 0 else 0
+            self.check_message = "Xeque-mate!"  # Mensagem de xeque-mate
+
+    def CheckKingCaptured(self):
+        if self.WhiteKing not in [piece for row in self.grid for piece in row if piece]:
+            self.winner = 1  # Rei branco capturado, preto ganha
+            self.check_message = "Rei branco capturado! Preto vence!"  # Mensagem de captura
+        elif self.BlackKing not in [piece for row in self.grid for piece in row if piece]:
+            self.winner = 0  # Rei preto capturado, branco ganha
+            self.check_message = "Rei preto capturado! Branco vence!"  # Mensagem de captura

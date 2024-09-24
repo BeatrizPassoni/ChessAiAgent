@@ -20,13 +20,6 @@ class Chess:
         self.draggedPiece = None
         self.CanBeReleased = False
         self.AdjustedMouse = Position(0, 0)
-        self.gameOverBackground = pygame.image.load("./assets/images/gameOver.jpg")
-        self.gameOverBackground = pygame.transform.smoothscale(self.gameOverBackground, Config.resolution)
-        self.gameOverHeader = ui.TextUI(self.screen, "GAME OVER", Config.width//2, Config.height//6, 140, (255, 255, 255))
-        self.gameOverHeader.centered = True
-        self.winnerText = ui.TextUI(self.screen, "White Won the game", Config.width//2, Config.height//2, 200, (190, 255, 180))
-        self.winnerText.centered = True
-
         self.ComputerAI = Minimax(Config.AI_DEPTH, self.board, True, True)
 
     def GetFrameRate(self):
@@ -120,8 +113,12 @@ class Chess:
     def IsGameOver(self):
         if self.board.winner is not None:
             self.gameOver = True
+        if self.board.winner == 0:
+            winner = "Branco"
+        elif self.board.winner == 1:
+            winner = "Preto"
             self.display()
-            self.gameOverWindow()
+            print("\n\nVencedor = " +winner + "\n\n")
 
     def ReleasePiece(self):
         self.selectedPiece = None
@@ -150,22 +147,3 @@ class Chess:
                 y_pos = y * Config.spotSize + Config.top_offset // 2
                 if self.board.grid[x][y] is not None:
                     self.screen.blit(self.board.grid[x][y].sprite, (x_pos, y_pos))
-
-    def gameOverWindow(self):
-        time.sleep(2)
-        self.screen.blit(self.gameOverBackground, (0, 0))
-        self.gameOverHeader.Draw()
-        if self.board.winner == 0:
-            self.winnerText.text = "White Won"
-            self.screen.blit(self.board.WhiteKing.sprite, (Config.width//2 - Config.spotSize // 2, Config.height//3))
-        elif self.board.winner == 1:
-            self.winnerText.text = "Black Won"
-            self.screen.blit(self.board.BlackKing.sprite, (Config.width//2 - Config.spotSize // 2, Config.height//3))
-        else:
-            self.winnerText.text = "DRAW"
-
-        self.gameOverHeader.Draw()
-        self.winnerText.Draw()
-        pygame.display.update()
-        time.sleep(3)
-        self.board = Board()
