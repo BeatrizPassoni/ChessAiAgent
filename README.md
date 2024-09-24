@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Este projeto implementa um jogo de xadrez utilizando Python e a biblioteca Pygame. O objetivo é proporcionar uma experiência de jogo interativa, permitindo que os usuários joguem contra um oponente humano ou uma inteligência artificial.
+Este projeto implementa um jogo de xadrez utilizando Python e a biblioteca Pygame. O objetivo é proporcionar uma experiência de jogo interativa, permitindo que os usuários joguem contra uma inteligência artificial.
 
 ## Estrutura do Projeto
 
@@ -25,11 +25,11 @@ Este projeto implementa um jogo de xadrez utilizando Python e a biblioteca Pygam
    git clone https://github.com/seu_usuario/projeto_xadrez.git
 
 2. Navegue até o diretório do projeto:
-bash
+```bash
 cd projeto_xadrez
 bash
 pip install pygame
 
 ## Execução 
-bash
+```bash
 python main.py
