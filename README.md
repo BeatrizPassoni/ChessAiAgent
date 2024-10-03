@@ -1,9 +1,9 @@
-# Projeto de Xadrez em Python
+# Agente Inteligente: Bot de Xadrez 
 
 ## 1. Descrição Geral
 
-Este projeto é uma implementação do jogo de xadrez desenvolvida em Python, utilizando a biblioteca Pygame para gerenciar a interface gráfica. O objetivo é criar uma experiência de jogo completa, permitindo aos usuários jogarem contra uma inteligência artificial. Além de implementar as funcionalidades básicas do jogo de xadrez, o projeto busca explorar conceitos de programação orientada a objetos e algoritmos de inteligência artificial aplicados à lógica de jogos.
-
+Este projeto tem como objetivo a implementação das funcionalidades essenciais do jogo de xadrez, visando explorar conceitos de agentes inteligentes e aplicar algoritmos de inteligência artificial na lógica dos jogos. Trata-se de um jogo de xadrez desenvolvido em Python, utilizando a biblioteca Pygame para a gestão da interface gráfica. O principal intuito é proporcionar uma experiência de jogo completa, permitindo que os usuários enfrentem uma inteligência artificial.
+ 
 ## 2. Estrutura do Projeto
 
 Abaixo está uma visão geral dos principais módulos e arquivos do projeto, incluindo suas funções e interações:
@@ -89,12 +89,6 @@ O agente implementado neste projeto pode ser considerado um **agente inteligente
 
 Esses fatores são combinados para calcular a melhor jogada possível em um determinado estado do tabuleiro, levando a uma estratégia mais sofisticada e ponderada.
 
-## 8. Desenvolvimento Futuro
+## 8. Conclusão
 
-Há algumas melhorias e funcionalidades adicionais que podem ser desenvolvidas:
-- **Aprimoramento da IA**: Implementar técnicas avançadas para melhorar a estratégia de jogo.
-- **Interface Gráfica Melhorada**: Adicionar menus, animações e efeitos sonoros para uma experiência mais agradável.
-
-## 9. Conclusão
-
-Este projeto proporciona uma experiência completa de jogo de xadrez, combinando uma interface gráfica amigável com uma inteligência artificial capaz de tomar decisões baseadas em algoritmos clássicos de otimização. A implementação do algoritmo Minimax com poda Alfa-Beta torna a IA eficiente, enquanto o uso do conceito de agentes de utilidade permite decisões estratégicas com base em múltiplos fatores do jogo. Com algumas melhorias futuras, como aprimoramento da IA e ajustes visuais, o projeto poderá proporcionar ainda mais profundidade e diversão para os jogadores.
+Este projeto oferece uma experiência integral do jogo de xadrez, integrando uma interface gráfica intuitiva a uma inteligência artificial que utiliza algoritmos clássicos de otimização. A implementação do algoritmo Minimax com poda Alfa-Beta assegura a eficiência da IA, enquanto a aplicação do conceito de agentes de utilidade possibilita decisões estratégicas fundamentadas em diversos fatores do jogo. Com futuras melhorias, como o aprimoramento da IA e ajustes visuais, o projeto poderá proporcionar ainda mais profundidade e prazer aos jogadores.
